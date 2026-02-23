@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>A4 Photo Print — Newspaper Templates</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <main class="app">
+    <h1>A4 Photo Print — Newspaper Templates</h1>
+
+    <div class="controls">
+      
+      <label class="file">Upload template
+        <input id="templateInput" type="file" accept="image/*">
+      </label>
+      
+      <label class="file">Upload photo
+        <input id="photoInput" type="file" accept="image/*">
+      </label>
+      
+      
+      <div class="actions">
+        <button id="customBtn">Custom Frame</button>
+        <button id="downloadBtn">Download PNG</button>
+        <button id="printBtn">Print</button>
+        <button id="whatsappBtn">Share to WhatsApp</button>
+      </div>
+    </div>
+
+    <div id="frameGrid" class="frame-grid" aria-label="Templates"></div>
+
+    <div class="preview-wrap">
+      <div class="paper-dim">Preview (25% of A4)</div>
+      <canvas id="previewCanvas" width="620" height="877"></canvas>
+    </div>
+
+    <p class="hint">Note: Export/download/print produce full A4 (2480×3508 px) images.</p>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
