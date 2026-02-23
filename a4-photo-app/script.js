@@ -1,5 +1,5 @@
 // ==========================================
-// A4 Photo Print App — frontend-only
+// A4 Photo Print App — Dynamic Frames
 // ==========================================
 
 const A4 = { w: 2480, h: 3508 };
@@ -10,10 +10,10 @@ let startPos = null;
 let currentDragPos = null;
 
 // ------------------------------------------
-// Frame Config
+// Default Frames (only used first time)
 // ------------------------------------------
 
-const FRAME_CONFIG = {
+const DEFAULT_FRAMES = {
   frame1: {
     name: "Frame 1",
     template: "templates/frame1.png",
@@ -31,9 +31,8 @@ const FRAME_CONFIG = {
   }
 };
 
-// ------------------------------------------
-// State
-// ------------------------------------------
+// Load from localStorage or default
+let FRAME_CONFIG = loadFramesFromStorage() || DEFAULT_FRAMES;
 
 let currentFrameKey = Object.keys(FRAME_CONFIG)[0];
 let templateImg = null;
@@ -52,12 +51,11 @@ const downloadBtn = document.getElementById("downloadBtn");
 const printBtn = document.getElementById("printBtn");
 const whatsappBtn = document.getElementById("whatsappBtn");
 const customBtn = document.getElementById("customBtn");
+const saveFrameBtn = document.getElementById("saveFrameBtn");
 
-// preview size
 previewCanvas.width = A4.w * PREVIEW_SCALE;
 previewCanvas.height = A4.h * PREVIEW_SCALE;
 
-// export canvas (full A4)
 const exportCanvas = document.createElement("canvas");
 exportCanvas.width = A4.w;
 exportCanvas.height = A4.h;
@@ -102,15 +100,37 @@ function setupEvents() {
     previewCanvas.style.cursor = "crosshair";
   });
 
+  // 🔥 CREATE NEW FRAME ON SAVE
+  saveFrameBtn.addEventListener("click", () => {
+
+    const newKey = "frame_" + Date.now();
+    const currentFrame = FRAME_CONFIG[currentFrameKey];
+    const frameCount = Object.keys(FRAME_CONFIG).length;
+
+
+    FRAME_CONFIG[newKey] = {
+      name: `Frame ${frameCount+1}`,
+      template: currentFrame.template,
+      photoArea: { ...currentFrame.photoArea }
+    };
+
+    currentFrameKey = newKey;
+
+    saveFramesToStorage();
+    buildFrameGrid();
+    renderPreview();
+
+    alert("New frame created and saved!");
+  });
+
   previewCanvas.addEventListener("mousedown", (e) => {
     if (!customMode) return;
-    const rect = previewCanvas.getBoundingClientRect();
 
+    const rect = previewCanvas.getBoundingClientRect();
     startPos = {
       x: (e.clientX - rect.left) / PREVIEW_SCALE,
       y: (e.clientY - rect.top) / PREVIEW_SCALE
     };
-
     currentDragPos = startPos;
   });
 
@@ -118,13 +138,12 @@ function setupEvents() {
     if (!customMode || !startPos) return;
 
     const rect = previewCanvas.getBoundingClientRect();
-
     currentDragPos = {
       x: (e.clientX - rect.left) / PREVIEW_SCALE,
       y: (e.clientY - rect.top) / PREVIEW_SCALE
     };
 
-    renderPreview(); // redraw live
+    renderPreview();
   });
 
   previewCanvas.addEventListener("mouseup", () => {
@@ -151,6 +170,19 @@ function setupEvents() {
 }
 
 // ==========================================
+// LOCAL STORAGE
+// ==========================================
+
+function saveFramesToStorage() {
+  localStorage.setItem("A4_CUSTOM_FRAMES", JSON.stringify(FRAME_CONFIG));
+}
+
+function loadFramesFromStorage() {
+  const saved = localStorage.getItem("A4_CUSTOM_FRAMES");
+  return saved ? JSON.parse(saved) : null;
+}
+
+// ==========================================
 // FRAME GRID
 // ==========================================
 
@@ -161,6 +193,12 @@ function buildFrameGrid() {
     const btn = document.createElement("button");
     btn.textContent = FRAME_CONFIG[key].name;
     btn.onclick = () => selectFrame(key);
+
+    if (key === currentFrameKey) {
+      btn.style.background = "#333";
+      btn.style.color = "white";
+    }
+
     frameGrid.appendChild(btn);
   });
 }
@@ -221,7 +259,6 @@ function renderPreview() {
 
   const frame = FRAME_CONFIG[currentFrameKey].photoArea;
 
-  // Draw fixed red border
   previewCtx.strokeStyle = "red";
   previewCtx.lineWidth = 2;
   previewCtx.strokeRect(
@@ -235,7 +272,6 @@ function renderPreview() {
     drawPhotoClipped(previewCtx, photoImg, frame, PREVIEW_SCALE);
   }
 
-  // Live blue dashed drag rectangle
   if (customMode && startPos && currentDragPos) {
     const x = Math.min(startPos.x, currentDragPos.x) * PREVIEW_SCALE;
     const y = Math.min(startPos.y, currentDragPos.y) * PREVIEW_SCALE;
@@ -250,7 +286,7 @@ function renderPreview() {
 }
 
 // ==========================================
-// DRAW PHOTO (COVER FIT)
+// COVER FIT
 // ==========================================
 
 function drawPhotoClipped(ctx, img, photoArea, scale = 1) {
