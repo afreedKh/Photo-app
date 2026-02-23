@@ -4,43 +4,182 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>A4 Photo Print — Newspaper Templates</title>
-  <link rel="stylesheet" href="styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <main class="app">
-    <h1>A4 Photo Print — Newspaper Templates</h1>
 
-    <div class="controls">
-      
-      <label class="file">Upload template
-        <input id="templateInput" type="file" accept="image/*">
-      </label>
-      
-      <label class="file">Upload photo
-        <input id="photoInput" type="file" accept="image/*">
-      </label>
-      
-      
-      <div class="actions">
-        <button id="customBtn">Custom Frame</button>
-        <button id="saveFrameBtn">Save Frame</button>
-        <button id="downloadBtn">Download PNG</button>
-        <button id="printBtn">Print</button>
-        <button id="whatsappBtn">Share to WhatsApp</button>
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#0a0a0c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <path d="M3 9h18M9 21V9"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1>PRINTFRAME</h1>
+        <span>A4 Photo Studio</span>
       </div>
     </div>
-
-    <div id="frameGrid" class="frame-grid" aria-label="Templates"></div>
-
-    <div class="preview-wrap">
-      <div class="paper-dim">Preview (25% of A4)</div>
-      <canvas id="previewCanvas" width="620" height="877"></canvas>
+    <div class="header-actions">
+      <button class="btn btn-ghost" id="headerDownload">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download
+      </button>
+      <button class="btn btn-primary" id="headerPrint">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Print
+      </button>
     </div>
+  </header>
 
-    <p class="hint">Note: Export/download/print produce full A4 (2480×3508 px) images.</p>
-  </main>
+  <!-- MAIN LAYOUT -->
+  <div class="app">
 
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+      <!-- Upload Template -->
+      <div class="upload-section">
+        <div class="section-label">Template</div>
+        <div class="upload-zone" id="templateZone">
+          <input id="templateInput" type="file" accept="image/*">
+          <div class="upload-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f5c842" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          </div>
+          <h3>Upload Template</h3>
+          <p>PNG, JPG up to 20MB</p>
+          <div class="file-badge" id="templateBadge" style="display:none">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            <span id="templateBadgeText">loaded</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upload Photo -->
+      <div class="upload-section">
+        <div class="section-label">Photo</div>
+        <div class="upload-zone" id="photoZone">
+          <input id="photoInput" type="file" accept="image/*">
+          <div class="upload-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f5c842" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          </div>
+          <h3>Upload Photo</h3>
+          <p>PNG, JPG up to 20MB</p>
+          <div class="file-badge" id="photoBadge" style="display:none">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            <span id="photoBadgeText">loaded</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Frames -->
+      <div class="frames-section" style="width:100%">
+        <div class="section-label">Frames</div>
+        <div id="frameGrid" class="frame-grid"></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Actions -->
+      <div class="actions-section" style="width:100%">
+        <div class="section-label">Tools</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <button class="btn btn-ghost btn-full" id="customBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Draw Custom Frame
+          </button>
+          <button class="btn btn-green btn-full" id="saveFrameBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Save as New Frame
+          </button>
+          <div class="action-grid">
+            <button class="btn btn-ghost" id="downloadBtn">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              PNG
+            </button>
+            <button class="btn btn-ghost" id="printBtn">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              Print
+            </button>
+          </div>
+          <button class="btn btn-ghost btn-full" id="whatsappBtn" style="background:rgba(37,211,102,0.08);color:#25d366;border-color:rgba(37,211,102,0.2)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+            WhatsApp
+          </button>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- CANVAS MAIN -->
+    <main class="main">
+      <div class="canvas-toolbar">
+        <div class="canvas-info">
+          <span class="badge">2480 × 3508 px</span>
+          <span class="badge" id="modeBadge">Preview 25%</span>
+          <span class="badge active" id="customBadge" style="display:none">✏ Draw Mode</span>
+        </div>
+        <div class="canvas-controls">
+          <button class="ctrl-btn" title="Zoom info" onclick="showToast('Export is always full A4 resolution', 'info')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="custom-mode-hint" id="customHint">
+        <div class="hint-dot"></div>
+        Draw mode active — click and drag on the canvas to define the photo area
+      </div>
+
+      <div class="canvas-wrap" id="canvasWrap">
+        <canvas id="previewCanvas" width="620" height="877"></canvas>
+      </div>
+
+      <p style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;">
+        Red outline = photo area &nbsp;·&nbsp; Full A4 export on Download / Print
+      </p>
+    </main>
+
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- MOBILE FAB -->
+  <div class="mobile-fab">
+    <button class="fab-btn" id="fabBtn" title="Actions">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0a0a0c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </button>
+  </div>
+
+  <!-- BOTTOM SHEET -->
+  <div class="bottom-sheet-overlay" id="sheetOverlay"></div>
+  <div class="bottom-sheet" id="bottomSheet">
+    <div class="sheet-handle"></div>
+    <div class="section-label" style="margin-bottom:16px">Quick Actions</div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <button class="btn btn-primary btn-full" id="mDownload">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download PNG
+      </button>
+      <button class="btn btn-ghost btn-full" id="mPrint">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Print
+      </button>
+      <button class="btn btn-ghost btn-full" id="mWhatsapp" style="color:#25d366;border-color:rgba(37,211,102,0.2)">
+        Share to WhatsApp
+      </button>
+      <button class="btn btn-ghost btn-full" id="mCustom">Draw Custom Frame</button>
+      <button class="btn btn-green btn-full" id="mSave">Save as New Frame</button>
+    </div>
+  </div>
   <script src="script.js"></script>
+  
 </body>
 </html>
